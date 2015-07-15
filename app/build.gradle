@@ -1,0 +1,28 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "21.1.1"
+
+    defaultConfig {
+        applicationId "com.timetrace.app"
+        minSdkVersion 15
+        targetSdkVersion 21
+        versionCode 2
+        versionName "1.1"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile files('libs/universal-image-loader-1.9.3-with-sources.jar')
+    compile files('libs/Android_Location_V1.3.0.jar')
+    compile files('libs/achartengine-1.1.0.jar')
+    compile 'com.android.support:support-v4:21.0.0'
+}

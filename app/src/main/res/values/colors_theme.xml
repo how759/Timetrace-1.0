@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="theme_blue">#00A1E9</color>
+    <color name="theme_gray">#585858</color>
+    <color name="theme_gray_light">#A0A0A0</color>
+    <color name="theme_gray_bright">#f8f8f8</color>
+    <color name="theme_gray_white">#ffffff</color>
+
+</resources>

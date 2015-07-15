@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TimeTrace</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_statistic">StatisticActivity</string>
+    <string name="title_activity_analyze">AnalyzeActivity</string>
+    <string name="title_activity_setting">SettingActivity</string>
+    <string name="title_activity_app_manager">AppManagerActivity</string>
+    <string name="title_activity_introduction">IntroductionActivity</string>
+
+    <string name="copy_right">Copyright © 2014 TimeTrace@github.org</string>
+
+</resources>
