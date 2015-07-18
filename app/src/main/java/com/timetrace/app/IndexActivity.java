@@ -27,7 +27,7 @@ import com.timetrace.utils.ViewUtil;
 public class IndexActivity extends BaseTabActivity {
     public static ActionBar actionBar;
 
-    private final String TAG = "IndexAct";
+    private final String TAG = "IndexAct hahaha";
     private final String TAB0 = "TAB0";
     private final String TAB1 = "TAB1";
     private final String TAB2 = "TAB2";
@@ -54,13 +54,14 @@ public class IndexActivity extends BaseTabActivity {
 
         sensorInfoProvider = new SensorInfoProvider();
         appInfoProvider = AppInfoProvider.getInstance();
-        System.out.println("start");
+        Log.d(TAG, "onCreate");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         sensorInfoProvider.registerListener();
+        Log.d(TAG, "onResume");
         appInfoProvider.start();
     }
 
@@ -68,6 +69,7 @@ public class IndexActivity extends BaseTabActivity {
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "stop");
+        appInfoProvider.start();
 //        applicationUtil.interrupt();
     }
 
@@ -81,29 +83,29 @@ public class IndexActivity extends BaseTabActivity {
 //        //super.finish();
 //    }
 
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event){
-        Log.d(TAG, "dispatchKeyEvent");
-        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK){
-            Log.d(TAG, "back");
-            if(event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0){
-                Log.d(TAG, "return");
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_MAIN);
-                intent.addCategory(Intent.CATEGORY_HOME);
-                startActivity(intent);
-            }
-            return true;
-        }
-        else {
-            return super.dispatchKeyEvent(event);
-        }
-    }
+//    @Override
+//    public boolean dispatchKeyEvent(KeyEvent event){
+//        Log.d(TAG, "dispatchKeyEvent");
+//        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK){
+//            Log.d(TAG, "back");
+//            if(event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0){
+//                Log.d(TAG, "return");
+//                Intent intent = new Intent();
+//                intent.setAction(Intent.ACTION_MAIN);
+//                intent.addCategory(Intent.CATEGORY_HOME);
+//                startActivity(intent);
+//            }
+//            return true;
+//        }
+//        else {
+//            return super.dispatchKeyEvent(event);
+//        }
+//    }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG, "pause !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        Log.d(TAG, "pause lasdfj;skdf!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         sensorInfoProvider.unregisterListener();
     }
 

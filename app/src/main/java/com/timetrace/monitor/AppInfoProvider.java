@@ -138,6 +138,7 @@ public class AppInfoProvider {
         if (runningAppProcessInfos == null) {
             return monitor.processInfoList;
         }
+        Log.d(TAG, "running process are " + runningAppProcessInfos.size());
 
         for (ActivityManager.RunningAppProcessInfo info : runningAppProcessInfos) {
             ProcessInfo processInfo = new ProcessInfo();
@@ -167,13 +168,15 @@ public class AppInfoProvider {
             addApp(info, applicationInfoList);
         }
 
-        Log.d(TAG, "running apps are " + applicationInfoList.size());
+        Log.d(TAG, "running apps are hehe" + applicationInfoList.size());
 
         return applicationInfoList;
     }
 
     public void start() {
+        Log.d(TAG, "start processthread");
         if (detectProcessThread == null) {
+            Log.d(TAG, "start detect process thread");
             detectProcessThread = new DetectProcessThread();
             detectProcessThread.start();
         }
@@ -206,7 +209,7 @@ public class AppInfoProvider {
         @Override
         public void run() {
             super.run();
-
+            Log.d(TAG, "detect process thread");
             startTime = System.currentTimeMillis();
             timeSlice = 0;
             while (!isInterrupted()) {
@@ -217,6 +220,7 @@ public class AppInfoProvider {
                 }
 
                 processInfoArray = new ProcessInfo[getRunningProcessList().size()];
+                Log.d(TAG, "num of process is" + getRunningProcessList().size());
                 monitor.processInfoList.toArray(processInfoArray);
                 monitor.processInfoQueue.offer(processInfoArray);
 
