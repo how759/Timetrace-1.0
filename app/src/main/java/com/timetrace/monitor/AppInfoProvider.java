@@ -168,7 +168,7 @@ public class AppInfoProvider {
             addApp(info, applicationInfoList);
         }
 
-        Log.d(TAG, "running apps are hehe" + applicationInfoList.size());
+        Log.d(TAG, "running apps are hehe " + applicationInfoList.size());
 
         return applicationInfoList;
     }
@@ -220,7 +220,7 @@ public class AppInfoProvider {
                 }
 
                 processInfoArray = new ProcessInfo[getRunningProcessList().size()];
-                Log.d(TAG, "num of process is" + getRunningProcessList().size());
+                Log.d(TAG, "num of process is " + getRunningProcessList().size());
                 monitor.processInfoList.toArray(processInfoArray);
                 monitor.processInfoQueue.offer(processInfoArray);
 
