@@ -11,7 +11,7 @@ import org.achartengine.renderer.SimpleSeriesRenderer;
 
 import java.text.DecimalFormat;
 
-public class PieChartBuilder extends ChartBuilder{
+public class PieChartBuilder extends ChartBuilder {
 
 	public static GraphicalView execute(Context context, long[] data){
 		//初始化

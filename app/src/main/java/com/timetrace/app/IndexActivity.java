@@ -105,7 +105,7 @@ public class IndexActivity extends BaseTabActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG, "pause lasdfj;skdf!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//        Log.d(TAG, "pause !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         sensorInfoProvider.unregisterListener();
     }
 

@@ -10,6 +10,9 @@ import com.timetrace.objects.ApplicationInfo;
 import com.timetrace.objects.ProcessInfo;
 import com.timetrace.utils.TimeUtil;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,28 +134,78 @@ public class AppInfoProvider {
         return applicationInstalled;
     }
 
+//    public List<ProcessInfo> getRunningProcessList() {
+//        List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfos = activityManager.getRunningAppProcesses();
+//
+//        monitor.processInfoList.clear();
+//        if (runningAppProcessInfos == null) {
+//            return monitor.processInfoList;
+//        }
+//        Log.d(TAG, "running process are " + runningAppProcessInfos.size());
+//
+//        for (ActivityManager.RunningAppProcessInfo info : runningAppProcessInfos) {
+//            ProcessInfo processInfo = new ProcessInfo();
+//            processInfo.setImportance(info.importance);
+//            processInfo.setPackName(info.processName);
+//
+//            if (info.processName == null || info.processName.isEmpty())
+//                continue;
+//
+//            monitor.processInfoList.add(processInfo);
+//        }
+//
+//        return monitor.processInfoList;
+//    }
+
     public List<ProcessInfo> getRunningProcessList() {
-        List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfos = activityManager.getRunningAppProcesses();
-
         monitor.processInfoList.clear();
-        if (runningAppProcessInfos == null) {
-            return monitor.processInfoList;
+        Process process = null;
+        String tag = "upgraderootpermission";
+        try {
+            String cmd = "ps -P";
+            Log.d(tag, cmd);
+            process = Runtime.getRuntime().exec(cmd);
+            BufferedReader in = new BufferedReader (new InputStreamReader(process.getInputStream()));
+            String line = null;
+            ArrayList<String> arg = new ArrayList<String>();
+            while ((line = in.readLine()) != null){
+//                Log.d("line", line);
+                String tmp = "";
+                arg.clear();
+                for (String str : line.split(" ")){
+                    if (str.length()!=0){
+                        tmp += str;
+                        tmp += "*";
+                        arg.add(str);
+                    }
+                }
+
+                if (arg.size() == 10){
+                    if (arg.get(9).contains(".")){
+//                        Log.d("split", arg.get(5) + " " + arg.get(9));
+                        ProcessInfo processInfo = new ProcessInfo();
+                        if (arg.get(5).equals("fg")){
+                            processInfo.setImportance(ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND);
+                        }
+                        else {
+                            processInfo.setImportance(ActivityManager.RunningAppProcessInfo.IMPORTANCE_BACKGROUND);
+                        }
+                        processInfo.setPackName(arg.get(9));
+                        monitor.processInfoList.add(processInfo);
+                    }
+                }
+            }
+//            Log.d(tag, "done");
+
+        } catch (Exception e) {
+            Log.d(tag + "exception", e.toString());
+        } finally {
+            process.destroy();
         }
-        Log.d(TAG, "running process are " + runningAppProcessInfos.size());
-
-        for (ActivityManager.RunningAppProcessInfo info : runningAppProcessInfos) {
-            ProcessInfo processInfo = new ProcessInfo();
-            processInfo.setImportance(info.importance);
-            processInfo.setPackName(info.processName);
-
-            if (info.processName == null || info.processName.isEmpty())
-                continue;
-
-            monitor.processInfoList.add(processInfo);
-        }
-
         return monitor.processInfoList;
     }
+
+
 
     public List<ApplicationInfo> getRunningAppList() {
         while (monitor.processInfoList.isEmpty()) {
@@ -168,7 +221,7 @@ public class AppInfoProvider {
             addApp(info, applicationInfoList);
         }
 
-        Log.d(TAG, "running apps are hehe " + applicationInfoList.size());
+        Log.d(TAG, "running apps are " + applicationInfoList.size());
 
         return applicationInfoList;
     }

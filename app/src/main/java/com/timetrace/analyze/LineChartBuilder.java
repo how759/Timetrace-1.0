@@ -10,7 +10,7 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
-public class LineChartBuilder extends ChartBuilder{
+public class LineChartBuilder extends ChartBuilder {
 	public static GraphicalView execute(Context context, long[][] data, int scale,int unit){
 		XYMultipleSeriesDataset dataset;
 		XYMultipleSeriesRenderer renderer;

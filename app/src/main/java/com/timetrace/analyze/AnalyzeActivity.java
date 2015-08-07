@@ -21,26 +21,31 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.timetrace.app.R.layout.*;
+import static com.timetrace.app.R.layout.activity_analyze;
+import static com.timetrace.app.R.layout.analyze_activity;
+import static com.timetrace.app.R.layout.analyze_motion;
+import static com.timetrace.app.R.layout.analyze_phone;
 
 /**
  * 负责统计数据的活动
  */
 public class AnalyzeActivity extends BaseActivity implements View.OnClickListener {
+    private static final String[] slt_range = {"今天", "7天", "30天"};
+    private static final String[] slt_type = {"分布", "比例", "趋势"};
     private ViewPager viewPager;
-    private TextView textView_phone,textView_motion,textView_activity;
+    private TextView textView_phone, textView_motion, textView_activity;
     private LinearLayout selector;
     private List<View> pages;
     private View page_phone, page_motion, page_activity;
     private Button draw_btn;
-    private WheelView wvw_sta_range,wvw_sta_type;
-    private static final String[] slt_range={"今天", "7天", "30天"};
-    private static final String[] slt_type={"分布", "比例", "趋势"};
+    private WheelView wvw_sta_range, wvw_sta_type;
     private long[] statistic_data;
     private long[] real_data;
     private long[][] data_perunit;
-    private int statistic_type =1;
-    private int statistic_range=1;
+    private int statistic_type = 1;
+    private int statistic_range = 1;
+
+    private AppAnalyzer appAnalyzer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,62 +54,61 @@ public class AnalyzeActivity extends BaseActivity implements View.OnClickListene
         initActionBar();
         initView();
 
+
         draw_btn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 pages.clear();
                 long current = System.currentTimeMillis();
-                long day = 24*60*60*1000;
-                long hour = 60*60*1000;
-                long minute = 60*1000;
+                long day = 24 * 60 * 60 * 1000;
+                long hour = 60 * 60 * 1000;
+                long minute = 60 * 1000;
                 //根据所选时间段得到统计数据
                 if (statistic_range == 1)//1天
-                   statistic_data = AppAnalyzer.analyze(TimeUtil.getDayStart(current), current);
+                    statistic_data = appAnalyzer.analyze(TimeUtil.getDayStart(current), current);
                 else if (statistic_range == 2)//7天
-                    statistic_data =AppAnalyzer.analyze(current-7*day, current);
-                else statistic_data =AppAnalyzer.analyze(current-30*day, current);//30天
+                    statistic_data = appAnalyzer.analyze(current - 7 * day, current);
+                else statistic_data = appAnalyzer.analyze(current - 30 * day, current);//30天
 
 
-                for (int i = 0;i<5; ++i){
-                    real_data[i]= statistic_data[i+1];
+                for (int i = 0; i < 5; ++i) {
+                    real_data[i] = statistic_data[i + 1];
                 }
                 //根据所选类型得到需要画的图的类型
                 if (statistic_type == 1)//分布
-                   pages.add(BarChartBuilder.execute(AnalyzeActivity.this,real_data));
-                else if (statistic_type ==2)//比例
-                    pages.add(PieChartBuilder.execute(AnalyzeActivity.this,real_data));
+                    pages.add(BarChartBuilder.execute(AnalyzeActivity.this, real_data));
+                else if (statistic_type == 2)//比例
+                    pages.add(PieChartBuilder.execute(AnalyzeActivity.this, real_data));
                 else {//趋势
                     int length;
-                    if (statistic_range == 1){//1天
-                        length = (int)((current - TimeUtil.getDayStart(current))/hour);
+                    if (statistic_range == 1) {//1天
+                        length = (int) ((current - TimeUtil.getDayStart(current)) / hour);
                         data_perunit = new long[length][5];
-                        for (int i=0; i<length; ++i){
-                            statistic_data = AppAnalyzer.analyze(TimeUtil.getDayStart(current)+hour*i, TimeUtil.getDayStart(current)+hour*(i+1));//
-                            for (int j=0; j<5; ++j)
-                                data_perunit[i][j] =statistic_data[j+1]/minute;
+                        for (int i = 0; i < length; ++i) {
+                            statistic_data = appAnalyzer.analyze(TimeUtil.getDayStart(current) + hour * i, TimeUtil.getDayStart(current) + hour * (i + 1));//
+                            for (int j = 0; j < 5; ++j)
+                                data_perunit[i][j] = statistic_data[j + 1] / minute;
                         }
-                        pages.add(LineChartBuilder.execute(AnalyzeActivity.this, data_perunit,length,0));
-                    }
-                    else {//7天或30天
-                        if (statistic_range==2) length = 7; else length = 30;
+                        pages.add(LineChartBuilder.execute(AnalyzeActivity.this, data_perunit, length, 0));
+                    } else {//7天或30天
+                        if (statistic_range == 2) length = 7;
+                        else length = 30;
                         data_perunit = new long[length][5];
-                        for (int i=0; i<length; ++i){
-                            statistic_data = AppAnalyzer.analyze(current-(length-i)*day,current-(length-i-1)*day);//
-                            for (int j=0; j<5; ++j)
-                                data_perunit[i][j] =statistic_data[j+1]/hour;
+                        for (int i = 0; i < length; ++i) {
+                            statistic_data = appAnalyzer.analyze(current - (length - i) * day, current - (length - i - 1) * day);//
+                            for (int j = 0; j < 5; ++j)
+                                data_perunit[i][j] = statistic_data[j + 1] / hour;
                         }
-                        pages.add(LineChartBuilder.execute(AnalyzeActivity.this, data_perunit,length,1));
+                        pages.add(LineChartBuilder.execute(AnalyzeActivity.this, data_perunit, length, 1));
                     }
                 }
-                pages.add(PieChartBuilder.execute(AnalyzeActivity.this,real_data));
-                pages.add(BarChartBuilder.execute(AnalyzeActivity.this,real_data));
+                pages.add(PieChartBuilder.execute(AnalyzeActivity.this, real_data));
+                pages.add(BarChartBuilder.execute(AnalyzeActivity.this, real_data));
                 SetAdepter();
             }
         });
         SetAdepter();
-
-
 
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -170,31 +174,37 @@ public class AnalyzeActivity extends BaseActivity implements View.OnClickListene
             }
         });
     }
+
     //负责滑动选择的初始化
     private void initView() {
         real_data = new long[5];
-        draw_btn =(Button) findViewById(R.id.draw_button);
+        draw_btn = (Button) findViewById(R.id.draw_button);
 
-        wvw_sta_range = (WheelView)findViewById(R.id.analyze_range);
-        wvw_sta_range.setOffset(1);
+        wvw_sta_range = (WheelView) findViewById(R.id.analyze_range);
+        wvw_sta_range.setOffset(2);
+        wvw_sta_range.setItemHeight(24);
         wvw_sta_range.setItems(Arrays.asList(slt_range));
         wvw_sta_range.setOnWheelViewListener(new WheelView.OnWheelViewListener() {
             @Override
             public void onSelected(int selectedIndex, String item) {
-                statistic_range = selectedIndex;
-                //System.out.println("index="+selectedIndex);
+                statistic_range = selectedIndex-1;
+                System.out.println("index="+selectedIndex);
             }
         });
-        wvw_sta_type = (WheelView)findViewById(R.id.analyze_type);
-        wvw_sta_type.setOffset(1);
+        wvw_sta_range.startScrollerTask();
+
+        wvw_sta_type = (WheelView) findViewById(R.id.analyze_type);
+        wvw_sta_type.setOffset(2);
+        wvw_sta_type.setItemHeight(24);
         wvw_sta_type.setItems(Arrays.asList(slt_type));
         wvw_sta_type.setOnWheelViewListener(new WheelView.OnWheelViewListener() {
             @Override
             public void onSelected(int selectedIndex, String item) {
-                statistic_type = selectedIndex;
-                //System.out.println("index="+selectedIndex);
+                statistic_type = selectedIndex-1;
+                System.out.println("index="+selectedIndex);
             }
         });
+        wvw_sta_type.startScrollerTask();
 
 
         textView_phone = (TextView) findViewById(R.id.analyze_phone);
@@ -203,10 +213,10 @@ public class AnalyzeActivity extends BaseActivity implements View.OnClickListene
 
         viewPager = (ViewPager) findViewById(R.id.vp_charts);
         pages = new ArrayList<View>();
-        LayoutInflater inflater=getLayoutInflater();
-        page_phone = inflater.inflate(analyze_phone,null);
-        page_motion = inflater.inflate(analyze_motion,null);
-        page_activity = inflater.inflate(analyze_activity,null);
+        LayoutInflater inflater = getLayoutInflater();
+        page_phone = inflater.inflate(analyze_phone, null);
+        page_motion = inflater.inflate(analyze_motion, null);
+        page_activity = inflater.inflate(analyze_activity, null);
         pages.add(page_phone);
         pages.add(page_motion);
         pages.add(page_activity);
